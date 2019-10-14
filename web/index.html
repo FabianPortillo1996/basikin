@@ -6,35 +6,140 @@
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>QR Code Generator</title>
-    <link href="style.css" rel="stylesheet">
+    <title>ChatBasikin</title>
     <script type="text/javascript" src="/eel.js"></script>
-    <script type="text/javascript" src="main.js"></script>
-    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16.8.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16.8.0/umd/react-dom.production.min.js"></script>
 </head>
 
 <body>
-    <section class="wellcome_area clearfix" id="home">
-        <div class="container h-100">
-            <div class="row h-100 align-items-center">
-                <div class="col-12 col-md">
-                    <div class="wellcome-heading">
-                        <h2>Code Generator</h2>
-                        <h3>QR</h3>
-                        <p>Turn any piece of text into a QR code.</p>
+
+<script type="text/babel">
+
+    const Chat = () => {
+        React.useEffect(() => {
+            eel.get_users();
+            console.log(localStorage.getItem('auth'));
+            if (localStorage.getItem('auth') === null)
+                eel.add_user(me.name, me.image);
+            localStorage.setItem('auth', '1');
+        }, []);
+
+
+        const [contacts, setContacts] = React.useState([]);
+        const [me, setMe] = React.useState({
+            name: 'Fabian Portillo',
+            image: './img/avatar-2.png'
+        });
+
+        const [messages, setMessages] = React.useState([]);
+
+        eel.expose(handleAddContact);
+
+        function handleAddContact(contact) {
+            setContacts([...contacts, contact]);
+        }
+
+        eel.expose(getUsers);
+
+        function getUsers(users) {
+            setContacts(users);
+        }
+
+
+        eel.expose(getMessages);
+
+        function getMessages(messages) {
+            setMessages(messages);
+        }
+
+        return <div className="wrapper">
+            <header>
+                <div className="container">
+                    <div className="left"><img src="./img/logo.svg"/></div>
+
+                    <div className="middle">
+                        <h3>{me.name}</h3>
+                        <p>Chat</p>
                     </div>
-                    <div class="get-start-area">
-                        <form class="form-inline">
-                            <input type="text" id="data" class="form-control email" placeholder="Enter text">
-                            <input type="button" class="submit" value="Get QR Code" onclick="generateQRCode()">
-                        </form>
+                    <div className="right">
+                        <div className="username">
+                            <div className="settings"><img src="./img/settings.svg"/></div>
+                            {me.name}
+                        </div>
+                        <div className="avatar"><img src={me.image}/></div>
                     </div>
                 </div>
-            </div>
+            </header>
+
+            <main>
+                <div className="col-left">
+                    <div className="col-content">
+                        <div className="messages">
+                            {contacts.map((contact, index) => <li key={index}>
+                                <div className="avatar">
+                                    <div className="avatar-image">
+                                        <div className="status online"/>
+                                        <img src={contact.image}/>
+                                    </div>
+                                </div>
+                                <h3>{contact.name}</h3>
+                                <p>{contact.lastMessage}</p>
+                            </li>)}
+                        </div>
+                    </div>
+                </div>
+                <div className="col">
+                    <div className="col-content">
+                        <section className="message">
+                            <div className="grid-message">
+                                <div className="col-message-received">
+                                    {messages.map((message, index) =>
+                                        <div className="message-received" key={index}>
+                                            <p>{message.message}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    <div className="col-foot">
+                        <div className="compose">
+                            <input placeholder="Type a message"/>
+                            <div className="compose-dock">
+                                <div className="dock"><img src="./img/picture.svg"/><img src="./img/smile.svg"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-right">
+                    <div className="col-content">
+                        <div className="user-panel">
+                            <div className="avatar">
+                                <div className="avatar-image">
+                                    <div className="status online"></div>
+                                    <img src={me.image}/></div>
+                                <h3>{me.name}</h3>
+                                <p>Bogota D.C, Colombia</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
         </div>
-        <div class="welcome-thumb">
-            <img id="qr" src="" width="60%">
-        </div>
-    </section>
+    };
+
+    ReactDOM.render(
+        <Chat/>,
+        document.getElementById("root")
+    );
+</script>
+<div id="root"/>
+
 </body>
 </html>
