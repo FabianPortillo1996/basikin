@@ -1,6 +1,3 @@
-import io
-import pyqrcode
-from base64 import b64encode
 import eel
 import mysql.connector
 
@@ -51,4 +48,19 @@ def get_messages():
     eel.getMessages(messages)
 
 
+@eel.expose
+def add_message(message, user_id):
+    my_cursor = link.cursor()
+    sql = "INSERT INTO posts (message, user_id) VALUES (%s,%s)"
+    val = (message, user_id)
+    my_cursor.execute(sql, val)
+    link.commit()
+
+
+def send_message_to_email(message):
+    email = 'fabianportillo97@gmail.com'
+
+
 eel.start('index.html', size=(1000, 600))
+
+
