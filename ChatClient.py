@@ -1,12 +1,18 @@
 import eel
 import mysql.connector
+import socket
+
+s = socket.socket()  # Create a socket object
+s.connect(('192.168.0.5', 1234))
+# s.sendall('Here I am!'.encode())
+# s.close()
 
 eel.init('web')
 
 config = {
     'user': 'root',
-    'password': 'root',
-    'unix_socket': '/Applications/MAMP/tmp/mysql/mysql.sock',
+    'password': '',
+    # 'unix_socket': '/Applications/MAMP/tmp/mysql/mysql.sock',
     'database': 'chat',
     'raise_on_warnings': True,
 }
@@ -62,5 +68,3 @@ def send_message_to_email(message):
 
 
 eel.start('index.html', size=(1000, 600))
-
-
