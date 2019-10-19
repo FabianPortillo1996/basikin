@@ -32,11 +32,12 @@
         const [contacts, setContacts] = React.useState([]);
         const [me, setMe] = React.useState({
             name: 'Fabian Portillo',
-            image: './img/avatar-2.png'
+            image: './img/avatar-2.png',
+            id: localStorage.getItem('user_id')
         });
 
         const [messages, setMessages] = React.useState([]);
-
+        const [message, setMessage] = React.useState('');
         eel.expose(handleAddContact);
 
         function handleAddContact(contact) {
@@ -55,6 +56,25 @@
         function getMessages(messages) {
             setMessages(messages);
         }
+
+        eel.expose(setUserId);
+
+        function setUserId(id) {
+            localStorage.setItem('user_id', id);
+            setMe({
+                ...me,
+                id
+            })
+        }
+
+
+        function sendMessage(e) {
+            if (e.key === 'Enter' && message.length > 0) {
+                eel.add_message(message, me.id);
+                setMessage('');
+            }
+        }
+
 
         return <div className="wrapper">
             <header>
@@ -108,7 +128,9 @@
                     </div>
                     <div className="col-foot">
                         <div className="compose">
-                            <input placeholder="Type a message"/>
+                            <input placeholder="Escribe un mensaje" onKeyDown={sendMessage}
+                                   value={message}
+                                   onChange={(e) => setMessage(e.target.value)}/>
                             <div className="compose-dock">
                                 <div className="dock"><img src="./img/picture.svg"/><img src="./img/smile.svg"/>
                                 </div>

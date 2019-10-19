@@ -1,13 +1,27 @@
-import threading
+#!/usr/bin/env python3
+
 import socket
 
-s = socket.socket()
-s.bind(('192.168.0.5', 1234))
+HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
+PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
 
-s.listen(5)
+nombre_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+nombre_socket.bind((HOST, PORT))
+
+nombre_socket.listen(20)
+
+id_socket_cliente, direccion = nombre_socket.accept()
+
 while True:
-    c, addr = s.accept()
-    print('Got connection from', addr)
-    print(c.recv(1024))
-    s.send(c)
-    c.close()
+    bytes_a_recibir = 1024
+    mensaje_recibido = id_socket_cliente.recv(bytes_a_recibir)
+    texto = mensaje_recibido.decode("utf-8")
+    id_socket_cliente.send(texto.encode())
+    if texto == 'Ya no mas':
+        break
+    else:
+        print(texto)
+
+id_socket_cliente.close()
+nombre_socket.close()
