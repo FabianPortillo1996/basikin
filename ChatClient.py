@@ -35,10 +35,8 @@ def message_entry():
     while True:
         bytes_a_recibir = 1024
         message = nombre_socket.recv(bytes_a_recibir)
-        print(message.decode('utf-8'))
+        eel.addMessage(message.decode('utf-8'))
 
-        if message.decode('utf-8'):
-            break
 
 
 @eel.expose
