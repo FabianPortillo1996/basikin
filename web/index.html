@@ -31,8 +31,8 @@
 
         const [contacts, setContacts] = React.useState([]);
         const [me, setMe] = React.useState({
-            name: 'Fabian Portillo',
-            image: './img/avatar-2.png',
+            name: 'David',
+            image: './img/avatar-4.png',
             id: localStorage.getItem('user_id')
         });
 
@@ -78,8 +78,15 @@
         eel.expose(addMessage);
 
         function addMessage(message) {
-            console.log(message);
-            setMessages([...messages, {message : message}])
+
+            setMessages([...messages, {message: message}])
+        }
+
+
+        eel.expose(addUser);
+
+        function addUser(contact) {
+            setContacts([...contacts, contact])
         }
 
         return <div className="wrapper">

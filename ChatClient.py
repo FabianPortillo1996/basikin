@@ -8,7 +8,7 @@ import threading
 import socket
 
 HOST = '127.0.0.1'  # The server's hostname or IP address
-PORT = 65432  # The port used by the server
+PORT = 65435  # The port used by the server
 
 nombre_socket = socket.socket()
 
@@ -37,7 +37,12 @@ def message_entry():
         message = nombre_socket.recv(bytes_a_recibir)
         eel.addMessage(message.decode('utf-8'))
 
-
+@eel.expose
+def render_user():
+    sql = "SELECT * FROM users ORDER BY id DESC LIMIT 1"
+    my_cursor.execute(sql)
+    user = [dict(name=row[1], image=row[2], lastMessage=get_last_message(row[0])) for row in my_cursor.fetchall()]
+    eel.addUser(user)
 
 @eel.expose
 def add_user(name, image):

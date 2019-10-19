@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import socket
+import threading
 
 HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
 PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
@@ -11,17 +12,21 @@ nombre_socket.bind((HOST, PORT))
 
 nombre_socket.listen(20)
 
-id_socket_cliente, direccion = nombre_socket.accept()
+clients = []
+
+
+def recv(clientsocket):
+    while True:
+        msg = clientsocket.recv(1024)
+        for c in clients:
+            c.send(msg)
+
 
 while True:
-    bytes_a_recibir = 1024
-    mensaje_recibido = id_socket_cliente.recv(bytes_a_recibir)
-    texto = mensaje_recibido.decode("utf-8")
-    id_socket_cliente.send(texto.encode())
-    if texto == 'Ya no mas':
-        break
-    else:
-        print(texto)
+    c, addr = nombre_socket.accept()
+    clients.append(c)
+    thread_recv = threading.Thread(target=recv, args=((c,)))
+    thread_recv.start()
 
 id_socket_cliente.close()
 nombre_socket.close()
