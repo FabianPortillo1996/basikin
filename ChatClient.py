@@ -1,7 +1,6 @@
 import eel
 import mysql.connector
-import errno
-import sys
+import threading
 
 # Logica de cliente
 
@@ -16,6 +15,7 @@ nombre_socket = socket.socket()
 try:
     bandera = True
     nombre_socket.connect((HOST, PORT))
+
 except  ConnectionRefusedError:
     bandera = False
 
@@ -29,6 +29,16 @@ config = {
     'raise_on_warnings': True,
 }
 link = mysql.connector.connect(**config)
+
+
+def message_entry():
+    while True:
+        bytes_a_recibir = 1024
+        message = nombre_socket.recv(bytes_a_recibir)
+        print(message.decode('utf-8'))
+
+        if message.decode('utf-8'):
+            break
 
 
 @eel.expose
@@ -81,8 +91,10 @@ def send_message_to_email(message):
     email = 'fabianportillo97@gmail.com'
 
 
-eel.start('index.html', size=(1076, 651))
-
+if __name__ == "__main__":
+    hilo_1 = threading.Thread(target=message_entry)
+    hilo_1.start()
+    eel.start('index.html', size=(1076, 651))
 #     while True:
 #
 #         # Wait for user to input a message
